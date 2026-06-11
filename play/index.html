@@ -19,139 +19,37 @@
   <title>KALIBRE — Oyna</title>
   <link rel="manifest" href="manifest.json">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@700;900&family=Spline+Sans+Mono:wght@500;700&display=swap" rel="stylesheet">
-
   <style>
-    /* ==========================================================
-       KALIBRE web shell — "Analog Kadran" device frame.
-       Desktop: the game lives in a centered phone-sized
-       instrument body; the page around it is the lab bench.
-       Mobile (<=720px): the frame disappears, app is fullscreen.
-       ========================================================== */
-    :root{
-      --bg:#141210; --ink:#F0E9DD; --ndl:#FF4D1C;
-      --dim:rgba(240,233,221,.55); --faint:rgba(240,233,221,.32);
-      --line:rgba(240,233,221,.13);
-      --m:"Spline Sans Mono",ui-monospace,monospace;
-      --g:"Schibsted Grotesk",-apple-system,sans-serif;
+    /* Analog Kadran loading splash — warm black + sweeping needle.
+       The app itself draws the web chrome (lib/app/web_shell.dart). */
+    html, body { margin:0; padding:0; background:#141210; height:100%; overflow:hidden; }
+    #k-splash {
+      position:fixed; inset:0; background:#141210; z-index:9999;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      font-family:-apple-system, "Segoe UI", Roboto, sans-serif;
+      transition:opacity .4s ease; pointer-events:none;
     }
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
-    body{
-      background:var(--bg); overflow:hidden; font-family:var(--g);
-      background-image:radial-gradient(1000px 600px at 80% -10%, rgba(255,77,28,.07), transparent 60%);
-    }
-    /* grain + vignette */
-    body:before{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
-    body:after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;
-      background:radial-gradient(120% 95% at 50% 10%, transparent 55%, rgba(0,0,0,.55) 100%)}
-
-    /* ambient dial, left of the device */
-    #k-dial{position:fixed;left:-340px;top:50%;transform:translateY(-50%);
-      width:880px;height:880px;z-index:0;pointer-events:none}
-    #k-dial .rim{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(240,233,221,.08)}
-    #k-dial .rim2{position:absolute;inset:56px;border-radius:50%;border:1px solid rgba(240,233,221,.05)}
-    @keyframes drift{to{transform:rotate(360deg)}}
-    #k-dial .ticks{position:absolute;inset:18px;border-radius:50%;
-      background:repeating-conic-gradient(rgba(240,233,221,.22) 0 .35deg, transparent .35deg 6deg);
-      -webkit-mask:radial-gradient(circle, transparent 0 82%, #000 82% 88%, transparent 88%);
-      mask:radial-gradient(circle, transparent 0 82%, #000 82% 88%, transparent 88%);
-      animation:drift 180s linear infinite}
-    #k-dial .glow{position:absolute;inset:-40px;border-radius:50%;
-      background:radial-gradient(circle, rgba(255,77,28,.07) 0%, transparent 62%)}
-
-    /* stage: centers the device */
-    #k-stage{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;
-      gap:54px;padding:28px}
-
-    /* side rail: brand + meta (desktop only) */
-    #k-rail{display:flex;flex-direction:column;justify-content:space-between;align-self:stretch;
-      padding:18px 0;max-width:300px}
-    #k-rail .mk{font-weight:900;font-size:30px;letter-spacing:-.035em;color:var(--ink);text-decoration:none}
-    #k-rail .mk i{font-style:normal;color:var(--ndl)}
-    #k-rail .tg{font-family:var(--m);font-size:10px;letter-spacing:.26em;color:var(--faint);
-      text-transform:uppercase;margin-top:10px}
-    #k-rail .mid{font-family:var(--m);font-size:11px;line-height:2.1;color:var(--dim);letter-spacing:.04em}
-    #k-rail .mid b{color:var(--ndl);font-weight:500}
-    #k-rail .mid .ln{display:flex;align-items:center;gap:10px}
-    #k-rail .mid .ln:before{content:"";width:22px;height:1px;background:var(--line)}
-    #k-rail .ft{font-family:var(--m);font-size:10px;letter-spacing:.1em;color:var(--faint)}
-    #k-rail .ft a{color:var(--dim);text-decoration:none}
-    #k-rail .ft a:hover{color:var(--ndl)}
-
-    /* the device — instrument body */
-    #k-device{position:relative;flex:0 0 auto;
-      width:min(430px, 100vw); height:min(900px, 100%);
-      border-radius:40px; padding:10px; background:#000;
-      box-shadow:0 0 0 1.5px rgba(240,233,221,.14),
-                 0 70px 130px -50px rgba(0,0,0,.95),
-                 0 0 110px -30px rgba(255,77,28,.22)}
-    #k-device:before{content:"";position:absolute;inset:10px;border-radius:31px;pointer-events:none;z-index:30;
-      background:linear-gradient(115deg, rgba(255,255,255,.045) 0%, transparent 24%)}
-    #k-app{position:relative;width:100%;height:100%;border-radius:31px;overflow:hidden;background:var(--bg)}
-    #k-app flutter-view{width:100%;height:100%}
-
-    /* splash inside the device */
-    #k-splash{position:absolute;inset:0;background:var(--bg);z-index:50;
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      transition:opacity .4s ease;pointer-events:none}
-    #k-splash .mark{color:var(--ink);font-weight:900;font-size:34px;letter-spacing:-1px}
-    #k-splash .mark i{font-style:normal;color:var(--ndl)}
-    #k-splash .dial{position:relative;width:120px;height:66px;overflow:hidden;margin-top:26px}
-    #k-splash .dial .arc{position:absolute;left:0;right:0;top:0;bottom:-66px;border-radius:50%;
-      border:2px solid rgba(240,233,221,.13)}
-    @keyframes ksweep{0%{transform:rotate(-76deg)}50%{transform:rotate(76deg)}100%{transform:rotate(-76deg)}}
-    #k-splash .dial .ndl{position:absolute;left:50%;bottom:0;width:2.5px;height:54px;
-      background:var(--ndl);border-radius:3px;transform-origin:50% 100%;
-      animation:ksweep 1.6s cubic-bezier(.55,0,.45,1) infinite;box-shadow:0 0 12px rgba(255,77,28,.5)}
-    #k-splash .dial .hub{position:absolute;left:50%;bottom:-5px;width:10px;height:10px;
-      border-radius:50%;background:var(--ink);transform:translateX(-50%)}
-    #k-splash .lbl{margin-top:22px;color:var(--faint);font-size:10px;
-      letter-spacing:.3em;text-transform:uppercase;font-family:var(--m)}
-
-    /* -------- mobile: app IS the page -------- */
-    @media (max-width:720px), (max-height:560px){
-      #k-dial,#k-rail{display:none}
-      #k-stage{padding:0;gap:0}
-      #k-device{width:100%;height:100%;border-radius:0;padding:0;background:var(--bg);box-shadow:none}
-      #k-device:before{display:none}
-      #k-app{border-radius:0}
-    }
+    #k-splash .mark { color:#F0E9DD; font-weight:900; font-size:34px; letter-spacing:-1px; }
+    #k-splash .mark i { font-style:normal; color:#FF4D1C; }
+    #k-splash .dial { position:relative; width:120px; height:66px; overflow:hidden; margin-top:26px; }
+    #k-splash .dial .arc { position:absolute; left:0; right:0; top:0; bottom:-66px; border-radius:50%;
+      border:2px solid rgba(240,233,221,.13); }
+    @keyframes ksweep { 0%{transform:rotate(-76deg)} 50%{transform:rotate(76deg)} 100%{transform:rotate(-76deg)} }
+    #k-splash .dial .ndl { position:absolute; left:50%; bottom:0; width:2.5px; height:54px;
+      background:#FF4D1C; border-radius:3px; transform-origin:50% 100%;
+      animation:ksweep 1.6s cubic-bezier(.55,0,.45,1) infinite; box-shadow:0 0 12px rgba(255,77,28,.5); }
+    #k-splash .dial .hub { position:absolute; left:50%; bottom:-5px; width:10px; height:10px;
+      border-radius:50%; background:#F0E9DD; transform:translateX(-50%); }
+    #k-splash .lbl { margin-top:22px; color:rgba(240,233,221,.4); font-size:10px;
+      letter-spacing:.3em; text-transform:uppercase; font-family:ui-monospace, Menlo, monospace; }
   </style>
 </head>
 <body>
-  <div id="k-dial" aria-hidden="true">
-    <div class="glow"></div><div class="rim"></div><div class="rim2"></div><div class="ticks"></div>
+  <div id="k-splash">
+    <div class="mark">KALIBRE<i>.</i></div>
+    <div class="dial"><div class="arc"></div><div class="ndl"></div><div class="hub"></div></div>
+    <div class="lbl">Kalibre ediliyor</div>
   </div>
-
-  <div id="k-stage">
-    <div id="k-rail" aria-hidden="false">
-      <div>
-        <a class="mk" href="https://kalibre.gg/">KALIBRE<i>.</i></a>
-        <div class="tg">Duyu party oyunu</div>
-      </div>
-      <div class="mid">
-        <div class="ln">bak · <b>hafızana al</b> · kur</div>
-        <div class="ln">en yakın <b>kazanır</b></div>
-        <div class="ln">telefonda daha iyi — <b>yakında</b> store'da</div>
-      </div>
-      <div class="ft"><a href="https://kalibre.gg/">kalibre.gg</a> · <a href="https://kalibre.gg/privacy.html">gizlilik</a></div>
-    </div>
-
-    <div id="k-device">
-      <div id="k-app">
-        <div id="k-splash">
-          <div class="mark">KALIBRE<i>.</i></div>
-          <div class="dial"><div class="arc"></div><div class="ndl"></div><div class="hub"></div></div>
-          <div class="lbl">Kalibre ediliyor</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script>
     function kHideSplash() {
       var s = document.getElementById('k-splash');

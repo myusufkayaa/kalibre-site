@@ -35,14 +35,8 @@ if (!window._flutter) {
 }
 _flutter.buildConfig = {"engineRevision":"e4b8dca3f1b4ede4c30371002441c88c12187ed6","builds":[{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"},{}]};
 
-
-// KALIBRE web shell: Flutter renders inside the #k-app device frame
-// (desktop = centered instrument body, mobile = full screen via CSS).
 _flutter.loader.load({
-  onEntrypointLoaded: async (engineInitializer) => {
-    const appRunner = await engineInitializer.initializeEngine({
-      hostElement: document.querySelector('#k-app'),
-    });
-    await appRunner.runApp();
-  },
+  serviceWorkerSettings: {
+    serviceWorkerVersion: "2513111332" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */
+  }
 });
