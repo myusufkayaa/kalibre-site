@@ -13,6 +13,9 @@
 <meta property="og:url" content="https://kalibre.gg/">
 <meta property="og:image" content="https://kalibre.gg/og.png">
 
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -61,13 +64,13 @@ nav a.play:hover{background:rgba(255,77,28,.24)}
 
 /* ---------- hero ---------- */
 .hero{position:relative;padding:78px 0 54px;overflow:visible}
-.hero-dial{position:absolute;right:-260px;top:46%;transform:translateY(-50%);width:740px;height:740px;pointer-events:none;z-index:0}
+.hero-dial{position:absolute;right:-180px;top:46%;transform:translateY(-50%);width:740px;height:740px;pointer-events:none;z-index:0}
 .hero-dial .glow{position:absolute;inset:-50px;border-radius:50%;background:radial-gradient(circle, rgba(255,77,28,.13) 0%, rgba(255,77,28,.05) 40%, transparent 66%)}
-.hero-dial .rim{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(240,233,221,.1)}
-.hero-dial .rim2{position:absolute;inset:50px;border-radius:50%;border:1px solid rgba(240,233,221,.06)}
+.hero-dial .rim{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(240,233,221,.22)}
+.hero-dial .rim2{position:absolute;inset:50px;border-radius:50%;border:1.5px solid rgba(240,233,221,.12)}
 @keyframes drift{to{transform:rotate(360deg)}}
 .hero-dial .ticks{position:absolute;inset:16px;border-radius:50%;
-  background:repeating-conic-gradient(rgba(240,233,221,.32) 0 .35deg, transparent .35deg 6deg);
+  background:repeating-conic-gradient(rgba(240,233,221,.5) 0 .5deg, transparent .5deg 6deg);
   -webkit-mask:radial-gradient(circle, transparent 0 81%, #000 81% 88%, transparent 88%);mask:radial-gradient(circle, transparent 0 81%, #000 81% 88%, transparent 88%);animation:drift 150s linear infinite}
 .hero-dial .redzone{position:absolute;inset:16px;border-radius:50%;
   background:conic-gradient(from -32deg, rgba(255,77,28,.5) 0 30deg, transparent 30deg);
@@ -208,7 +211,15 @@ footer{border-top:1px solid var(--line);margin-top:110px;padding:44px 0 80px}
 .copy{margin-top:34px;font-family:var(--m);font-size:10.5px;color:var(--faint);letter-spacing:.06em}
 
 @media(max-width:1080px){.hero-dial{opacity:.5}}
-@media(max-width:680px){.hero-dial{display:none}}
+@media(max-width:680px){
+  .hero-dial{display:none}
+  .crumb{flex-wrap:wrap;row-gap:6px}
+  .readout{display:grid;grid-template-columns:1fr 1fr;row-gap:4px}
+  .readout>div{margin-right:0;padding:16px 8px 0 0}
+  .readout>div+div:before{display:none}
+  .cta{flex-direction:column;align-items:stretch}
+  .cta .btn{align-items:center;text-align:center}
+}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
