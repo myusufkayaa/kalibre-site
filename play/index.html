@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <base href="/play/">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="KALIBRE — duyu party oyunu. Rengi tuttur, süreyi bil, tempoyu yakala; en yakın kazanır.">
+  <meta name="theme-color" content="#141210">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KALIBRE">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>KALIBRE — Oyna</title>
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* Analog Kadran loading splash — warm black + sweeping needle.
+       Removed by Flutter's first frame (flutter-view replaces body content). */
+    html, body { margin:0; padding:0; background:#141210; height:100%; overflow:hidden; }
+    #k-splash {
+      position:fixed; inset:0; background:#141210; z-index:9999;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      font-family:-apple-system, "Segoe UI", Roboto, sans-serif;
+      transition:opacity .4s ease; pointer-events:none;
+    }
+    #k-splash .mark { color:#F0E9DD; font-weight:900; font-size:34px; letter-spacing:-1px; }
+    #k-splash .mark i { font-style:normal; color:#FF4D1C; }
+    #k-splash .dial { position:relative; width:120px; height:66px; overflow:hidden; margin-top:26px; }
+    #k-splash .dial .arc { position:absolute; left:0; right:0; top:0; bottom:-66px; border-radius:50%;
+      border:2px solid rgba(240,233,221,.13); }
+    @keyframes ksweep { 0%{transform:rotate(-76deg)} 50%{transform:rotate(76deg)} 100%{transform:rotate(-76deg)} }
+    #k-splash .dial .ndl { position:absolute; left:50%; bottom:0; width:2.5px; height:54px;
+      background:#FF4D1C; border-radius:3px; transform-origin:50% 100%;
+      animation:ksweep 1.6s cubic-bezier(.55,0,.45,1) infinite; box-shadow:0 0 12px rgba(255,77,28,.5); }
+    #k-splash .dial .hub { position:absolute; left:50%; bottom:-5px; width:10px; height:10px;
+      border-radius:50%; background:#F0E9DD; transform:translateX(-50%); }
+    #k-splash .lbl { margin-top:22px; color:rgba(240,233,221,.4); font-size:10px;
+      letter-spacing:.3em; text-transform:uppercase; font-family:ui-monospace, Menlo, monospace; }
+  </style>
+</head>
+<body>
+  <div id="k-splash">
+    <div class="mark">KALIBRE<i>.</i></div>
+    <div class="dial"><div class="arc"></div><div class="ndl"></div><div class="hub"></div></div>
+    <div class="lbl">Kalibre ediliyor</div>
+  </div>
+  <script>
+    // Fade the splash as soon as Flutter renders its first frame.
+    window.addEventListener('flutter-first-frame', function () {
+      var s = document.getElementById('k-splash');
+      if (s) { s.style.opacity = '0'; setTimeout(function(){ s.remove(); }, 450); }
+    });
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

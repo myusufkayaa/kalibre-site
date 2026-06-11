@@ -4,10 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KALIBRE — Duyu Party Oyunu</title>
-<meta name="description" content="KALIBRE: arkadaşlarınla aynı odada her tur farklı bir duyu testi. Rengi tuttur, tonu yakala, süreyi bil — en yakın kazanır. Canlı leaderboard + solo maç modu.">
-<meta name="theme-color" content="#0C0D10">
+<meta name="description" content="KALIBRE: arkadaşlarınla aynı odada her tur farklı bir duyu testi. Rengi tuttur, süreyi bil, tonu yakala — en yakın kazanır. Webde oyna ya da yakında App Store & Google Play'de.">
+<meta name="theme-color" content="#141210">
 
-<!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="KALIBRE — Duyu Party Oyunu">
 <meta property="og:description" content="Aynı odada, her tur farklı bir duyu. En yakın kazanır.">
@@ -16,262 +15,379 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Martian+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Spline+Sans+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
-  :root{
-    --bg:#0C0D10; --bg2:#11141A; --surface:#14181F;
-    --ink:#F3F5F7; --dim:#9AA4AE; --faint:#5C6670;
-    --line:#1E242C; --line2:#2A323C;
-    --signal:#D6FF3D; --signal-ink:#11160A; --bad:#FF5C5C;
-  }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    margin:0; background:var(--bg); color:var(--ink);
-    font-family:'Archivo',-apple-system,Segoe UI,Roboto,sans-serif;
-    line-height:1.6; -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-  }
-  /* faint instrument grid */
-  body::before{
-    content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
-    background-image:
-      linear-gradient(var(--line) 1px,transparent 1px),
-      linear-gradient(90deg,var(--line) 1px,transparent 1px);
-    background-size:64px 64px;
-    -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 0%,transparent 75%);
-            mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 0%,transparent 75%);
-    opacity:.5;
-  }
-  .wrap{position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:0 24px}
+/* ============================================================
+   KALIBRE — "Analog Kadran" kimliği
+   Warm-black gövde · krem mürekkep · tek iğne-turuncu aksan
+   ============================================================ */
+:root{
+  --bg:#141210; --bg2:#191613;
+  --srf:rgba(240,233,221,.05); --srf2:rgba(240,233,221,.09);
+  --line:rgba(240,233,221,.13);
+  --ink:#F0E9DD; --dim:rgba(240,233,221,.55); --faint:rgba(240,233,221,.32); --ghost:rgba(240,233,221,.16);
+  --ndl:#FF4D1C; --ndl-soft:rgba(255,77,28,.14); --ndl-ink:#1A0D06;
+  --good:#6FC380; --good-soft:rgba(111,195,128,.16);
+  --g:"Schibsted Grotesk",sans-serif; --m:"Spline Sans Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--g);-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  background-image:radial-gradient(1100px 520px at 82% -8%, rgba(255,77,28,.06), transparent 60%)}
+::selection{background:var(--ndl);color:#141210}
+/* grain + vignette: instrument body feel */
+body:before{content:"";position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+body:after{content:"";position:fixed;inset:0;z-index:89;pointer-events:none;background:radial-gradient(120% 90% at 50% 8%, transparent 55%, rgba(0,0,0,.5) 100%)}
+.wrap{max-width:1140px;margin:0 auto;padding:0 28px;position:relative;z-index:2}
+a{color:inherit;text-decoration:none}
 
-  a{color:inherit; text-decoration:none}
-  .mono{font-family:'Martian Mono',ui-monospace,monospace}
-  .label{font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:2.5px;
-    text-transform:uppercase; color:var(--faint)}
+/* scroll reveal */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}.d4{transition-delay:.28s}
 
-  /* ---- top bar ---- */
-  header{display:flex; align-items:center; justify-content:space-between;
-    padding:22px 0; position:relative; z-index:2}
-  .brand{font-family:'Anton',sans-serif; font-size:26px; letter-spacing:1.5px}
-  .brand .dot{color:var(--signal)}
-  nav{display:flex; gap:24px}
-  nav a{font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:1.6px;
-    color:var(--dim); text-transform:uppercase; transition:color .15s}
-  nav a:hover{color:var(--signal)}
+/* ---------- top bar ---------- */
+header{display:flex;align-items:center;justify-content:space-between;padding:24px 0;position:relative;z-index:5}
+.brand{font-weight:900;font-size:24px;letter-spacing:-.035em}
+.brand .tick{color:var(--ndl)}
+nav{display:flex;gap:26px;align-items:center}
+nav a{font-family:var(--m);font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;transition:color .15s}
+nav a:hover{color:var(--ndl)}
+nav a.play{color:var(--ndl);background:var(--ndl-soft);padding:8px 16px;border-radius:99px}
+nav a.play:hover{background:rgba(255,77,28,.24)}
+@media(max-width:640px){nav a:not(.play){display:none}}
 
-  /* ---- hero ---- */
-  .hero{padding:70px 0 40px; text-align:center}
-  .tag{display:inline-flex; align-items:center; gap:8px; padding:7px 14px;
-    border:1px solid var(--line2); border-radius:100px; margin-bottom:30px}
-  .tag .pulse{width:7px; height:7px; border-radius:50%; background:var(--signal);
-    box-shadow:0 0 10px var(--signal); animation:pulse 1.8s ease-in-out infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-  .tag span{font-family:'Martian Mono',monospace; font-size:10.5px; letter-spacing:2px; color:var(--dim)}
+/* ---------- hero ---------- */
+.hero{position:relative;padding:78px 0 54px;overflow:visible}
+.hero-dial{position:absolute;right:-260px;top:46%;transform:translateY(-50%);width:740px;height:740px;pointer-events:none;z-index:0}
+.hero-dial .glow{position:absolute;inset:-50px;border-radius:50%;background:radial-gradient(circle, rgba(255,77,28,.13) 0%, rgba(255,77,28,.05) 40%, transparent 66%)}
+.hero-dial .rim{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(240,233,221,.1)}
+.hero-dial .rim2{position:absolute;inset:50px;border-radius:50%;border:1px solid rgba(240,233,221,.06)}
+@keyframes drift{to{transform:rotate(360deg)}}
+.hero-dial .ticks{position:absolute;inset:16px;border-radius:50%;
+  background:repeating-conic-gradient(rgba(240,233,221,.32) 0 .35deg, transparent .35deg 6deg);
+  -webkit-mask:radial-gradient(circle, transparent 0 81%, #000 81% 88%, transparent 88%);mask:radial-gradient(circle, transparent 0 81%, #000 81% 88%, transparent 88%);animation:drift 150s linear infinite}
+.hero-dial .redzone{position:absolute;inset:16px;border-radius:50%;
+  background:conic-gradient(from -32deg, rgba(255,77,28,.5) 0 30deg, transparent 30deg);
+  -webkit-mask:radial-gradient(circle, transparent 0 81%, #000 81% 88%, transparent 88%);mask:radial-gradient(circle, transparent 0 81%, #000 81% 88%, transparent 88%)}
+@keyframes hn{0%,12%{transform:rotate(-128deg)}36%{transform:rotate(-16deg)}46%{transform:rotate(-32deg)}56%,72%{transform:rotate(-26deg)}88%,100%{transform:rotate(-128deg)}}
+.hero-dial .ndl{position:absolute;left:50%;top:50%;width:3px;height:334px;margin-left:-1.5px;background:linear-gradient(0deg,transparent 0 12%,var(--ndl) 12%);border-radius:4px;transform-origin:50% 0%;animation:hn 7.5s cubic-bezier(.45,0,.2,1) infinite;box-shadow:0 0 24px rgba(255,77,28,.45)}
+.hero-dial .hub{position:absolute;left:50%;top:50%;width:24px;height:24px;border-radius:50%;background:var(--ink);transform:translate(-50%,-50%);box-shadow:0 0 0 6px rgba(240,233,221,.08)}
+@keyframes rise{to{opacity:1;transform:none}}
+.hero>*:not(.hero-dial){opacity:0;transform:translateY(14px);animation:rise .9s cubic-bezier(.2,.75,.2,1) forwards}
+.crumb{font-family:var(--m);font-size:12px;letter-spacing:.06em;color:var(--dim);display:flex;align-items:center;gap:14px;animation-delay:.05s}
+.crumb .rule{flex:0 0 60px;height:1px;background:linear-gradient(90deg,var(--ndl),transparent)}
+.crumb b{color:var(--ndl);font-weight:500}
+.hero h1{font-weight:900;font-size:clamp(54px,10vw,124px);line-height:.9;letter-spacing:-.045em;margin-top:26px;animation-delay:.18s;position:relative;z-index:1}
+.hero h1 .tick{color:var(--ndl)}
+.hero h1 .l2{color:transparent;-webkit-text-stroke:1.5px rgba(240,233,221,.5)}
+.hero .sub{max-width:560px;margin-top:28px;font-size:17px;line-height:1.68;color:var(--dim);animation-delay:.34s;position:relative;z-index:1}
+.hero .sub b{color:var(--ink);font-weight:700}
+.hero .sub-en{margin-top:10px;font-family:var(--m);font-size:11.5px;letter-spacing:.04em;color:var(--faint);animation-delay:.42s;position:relative;z-index:1}
 
-  h1{font-family:'Anton',sans-serif; font-weight:400; margin:0;
-    font-size:clamp(52px,11vw,116px); line-height:.92; letter-spacing:1px}
-  h1 .dot{color:var(--signal)}
-  .sub{max-width:560px; margin:26px auto 0; font-size:clamp(16px,2.4vw,20px);
-    color:var(--dim)}
-  .sub b{color:var(--ink); font-weight:600}
-  .en{margin-top:10px; font-family:'Martian Mono',monospace; font-size:12px;
-    letter-spacing:1px; color:var(--faint)}
+.cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:38px;animation-delay:.5s;position:relative;z-index:1}
+@keyframes breath{0%,100%{box-shadow:0 14px 40px -12px rgba(255,77,28,.55)}50%{box-shadow:0 14px 56px -10px rgba(255,77,28,.85)}}
+.btn{display:inline-flex;flex-direction:column;justify-content:center;padding:13px 26px;border-radius:999px;min-height:58px}
+.btn .k{font-family:var(--m);font-size:9px;letter-spacing:.2em;opacity:.75}
+.btn .v{font-weight:700;font-size:16px;letter-spacing:-.01em;margin-top:2px}
+.btn.hot{background:var(--ndl);color:var(--ndl-ink);animation:breath 2.6s ease-in-out infinite;transition:transform .25s}
+.btn.hot:hover{transform:translateY(-3px)}
+.btn.ghost{box-shadow:inset 0 0 0 1.5px var(--line);color:var(--dim);transition:box-shadow .2s,color .2s}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1.5px var(--ghost);color:var(--ink)}
+.btn.ghost .v{font-size:14px}
 
-  .cta{margin-top:40px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap}
-  .btn{display:inline-flex; flex-direction:column; align-items:flex-start;
-    padding:13px 22px; border-radius:13px; min-width:190px}
-  .btn .k{font-family:'Martian Mono',monospace; font-size:9px; letter-spacing:2px; opacity:.7}
-  .btn .v{font-family:'Archivo'; font-weight:700; font-size:16px; margin-top:2px}
-  .btn.live{background:var(--signal); color:var(--signal-ink)}
-  .btn.soon{background:var(--surface); color:var(--ink); border:1px solid var(--line2)}
-  .btn.soon .v{color:var(--dim)}
+/* readout strip */
+.readout{display:flex;gap:0;flex-wrap:wrap;margin-top:46px;border-top:1px solid var(--line);font-family:var(--m);animation-delay:.62s;position:relative;z-index:1}
+.readout>div{padding:20px 30px 0 0;margin-right:30px;position:relative}
+.readout>div+div:before{content:"";position:absolute;left:-30px;top:20px;bottom:0;width:1px;background:var(--line)}
+.readout b{display:block;font-size:24px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+.readout b i{font-style:normal;color:var(--ndl)}
+.readout small{display:block;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:6px}
 
-  /* ---- readout strip ---- */
-  .readout{margin:60px auto 0; max-width:760px; display:grid;
-    grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line2);
-    border:1px solid var(--line2); border-radius:14px; overflow:hidden}
-  .cell{background:var(--bg2); padding:20px 14px; text-align:center}
-  .cell .n{font-family:'Anton',sans-serif; font-size:30px; color:var(--signal); line-height:1}
-  .cell .l{margin-top:8px}
-  @media(max-width:620px){.readout{grid-template-columns:repeat(2,1fr)}}
+/* ---------- marquee tape ---------- */
+.tape{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:15px 0;margin-top:50px;background:rgba(240,233,221,.02)}
+@keyframes tm{to{transform:translateX(-50%)}}
+.tape .in{display:flex;width:max-content;animation:tm 36s linear infinite;white-space:nowrap}
+.tape span{font-family:var(--m);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint);padding:0 16px}
+.tape span b{color:var(--ndl);font-weight:500}
 
-  /* ---- sections ---- */
-  section{padding:80px 0}
-  .eyebrow{margin-bottom:14px}
-  h2{font-family:'Anton',sans-serif; font-weight:400; letter-spacing:.5px;
-    font-size:clamp(30px,5vw,44px); margin:0 0 16px; line-height:1.02}
-  h2 .dot{color:var(--signal)}
-  .lead{color:var(--dim); max-width:620px; font-size:17px}
+/* ---------- section frame ---------- */
+section{margin-top:130px;position:relative}
+.snum{display:flex;align-items:baseline;gap:20px;border-bottom:1px solid var(--line);padding-bottom:20px;position:relative}
+.snum .n{font-family:var(--m);font-size:13px;color:var(--ndl)}
+.snum h2{font-weight:900;font-size:clamp(30px,4.4vw,50px);letter-spacing:-.03em;line-height:1}
+.snum .why{margin-left:auto;font-family:var(--m);font-size:11px;color:var(--faint);max-width:300px;text-align:right;line-height:1.6}
+@media(max-width:680px){.snum .why{display:none}}
+.gnum{position:absolute;right:-8px;top:-110px;font-weight:900;font-size:210px;line-height:1;letter-spacing:-.05em;color:transparent;-webkit-text-stroke:1px rgba(240,233,221,.07);pointer-events:none;user-select:none;z-index:0}
+@media(max-width:1080px){.gnum{font-size:130px;top:-70px}}
+.lede{max-width:720px;margin:26px 0 0;font-size:15.5px;line-height:1.72;color:var(--dim);position:relative;z-index:1}
+.lede b{color:var(--ink)}
+.lede code{font-family:var(--m);font-size:13px;color:var(--ndl);background:var(--ndl-soft);border-radius:5px;padding:1px 7px}
 
-  .steps{margin-top:46px; display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
-  @media(max-width:760px){.steps{grid-template-columns:1fr}}
-  .step{background:var(--surface); border:1px solid var(--line);
-    border-radius:16px; padding:26px}
-  .step .idx{font-family:'Martian Mono',monospace; font-size:11px; color:var(--signal);
-    letter-spacing:2px}
-  .step h3{font-family:'Archivo'; font-weight:700; font-size:19px; margin:16px 0 8px}
-  .step p{margin:0; color:var(--dim); font-size:15px}
+/* ---------- how: 3 steps ---------- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:42px}
+@media(max-width:760px){.steps{grid-template-columns:1fr}}
+.step{background:var(--srf);border-radius:22px;padding:28px;position:relative;overflow:hidden;transition:background .3s,transform .4s cubic-bezier(.2,.7,.2,1)}
+.step:hover{background:var(--srf2);transform:translateY(-6px)}
+.step .sn{font-family:var(--m);font-size:11px;letter-spacing:.1em;color:var(--ndl)}
+.step h3{font-weight:700;font-size:20px;letter-spacing:-.015em;margin-top:14px}
+.step p{font-size:14px;line-height:1.62;color:var(--dim);margin-top:10px}
+.step .art{height:84px;margin-top:20px;display:flex;align-items:center;justify-content:center;font-family:var(--m)}
+.codepill{font-weight:700;font-size:34px;letter-spacing:.14em;color:var(--ink)}
+.codepill i{font-style:normal;color:var(--ndl)}
+/* mini dial for step 2 */
+.mdial{position:relative;width:140px;height:78px;overflow:hidden}
+.mdial .arc{position:absolute;inset:0 0 -78px 0;border-radius:50%;border:2px solid var(--line)}
+.mdial .bt{position:absolute;inset:8px 8px -70px 8px;border-radius:50%;background:repeating-conic-gradient(from 244deg,var(--faint) 0 .8deg,transparent .8deg 11.8deg);-webkit-mask:radial-gradient(circle,transparent 0 56%,#000 56% 64%,transparent 64%);mask:radial-gradient(circle,transparent 0 56%,#000 56% 64%,transparent 64%)}
+@keyframes msweep{0%{transform:rotate(-78deg)}55%{transform:rotate(52deg)}72%{transform:rotate(38deg)}86%{transform:rotate(45deg)}100%{transform:rotate(43deg)}}
+.mdial .nd{position:absolute;left:50%;bottom:0;width:2.5px;height:62px;background:var(--ndl);border-radius:3px;transform-origin:50% 100%;animation:msweep 2.8s cubic-bezier(.6,0,.2,1) infinite alternate;box-shadow:0 0 12px rgba(255,77,28,.5)}
+.mdial .hb{position:absolute;left:50%;bottom:-5px;width:11px;height:11px;border-radius:50%;background:var(--ink);transform:translateX(-50%)}
+@keyframes slam{0%,15%{transform:scale(1.9);opacity:0;filter:blur(6px)}35%{transform:scale(.94);opacity:1;filter:blur(0)}46%{transform:scale(1.05)}58%,84%{transform:scale(1)}100%{transform:scale(1);opacity:0}}
+.slamm{font-family:var(--m);font-weight:700;font-size:46px;letter-spacing:-.04em;animation:slam 2.8s cubic-bezier(.2,.9,.3,1) infinite}
+.slamm i{font-style:normal;color:var(--ndl)}
 
-  /* ---- senses grid ---- */
-  .senses{margin-top:40px; display:flex; flex-wrap:wrap; gap:10px}
-  .chip{display:inline-flex; align-items:center; gap:9px; padding:11px 16px;
-    border:1px solid var(--line2); border-radius:100px; background:var(--bg2)}
-  .chip .swatch{width:11px; height:11px; border-radius:3px; background:var(--signal)}
-  .chip .t{font-family:'Martian Mono',monospace; font-size:12px; letter-spacing:1px}
-  .chip .u{font-family:'Martian Mono',monospace; font-size:10px; color:var(--faint); letter-spacing:1px}
+/* ---------- modes ---------- */
+.modes{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;margin-top:42px}
+@media(max-width:760px){.modes{grid-template-columns:1fr}}
+.mode{border-radius:26px;padding:34px;position:relative;overflow:hidden;background:var(--srf);transition:background .3s,transform .4s cubic-bezier(.2,.7,.2,1)}
+.mode:hover{background:var(--srf2);transform:translateY(-6px)}
+.mode.party{background:linear-gradient(135deg, rgba(255,77,28,.16), transparent 55%), var(--srf);box-shadow:inset 0 0 0 1.5px rgba(255,77,28,.25)}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:300% 0}}
+.mode.party:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 42%,rgba(255,77,28,.07) 50%,transparent 58%);background-size:240% 100%;animation:shimmer 4s linear infinite}
+.mode .tag{font-family:var(--m);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+.mode.party .tag{color:var(--ndl)}
+.mode h3{font-weight:900;font-size:34px;letter-spacing:-.03em;margin-top:12px}
+.mode p{font-size:14.5px;line-height:1.66;color:var(--dim);margin-top:12px;max-width:420px}
+.mode p b{color:var(--ink)}
+.mode .meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:24px;position:relative;z-index:1}
+.mode .meta div{font-family:var(--m);font-size:9.5px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase}
+.mode .meta b{display:block;font-size:21px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-bottom:5px}
+.mode.party .meta b{color:var(--ndl)}
 
-  /* ---- split feature ---- */
-  .split{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:40px}
-  @media(max-width:760px){.split{grid-template-columns:1fr}}
-  .card{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:30px}
-  .card h3{font-family:'Anton',sans-serif; font-weight:400; font-size:26px; margin:0 0 12px; letter-spacing:.5px}
-  .card p{color:var(--dim); margin:0; font-size:15px}
-  .card .meta{margin-top:18px; display:flex; gap:18px; flex-wrap:wrap}
-  .card .meta div{font-family:'Martian Mono',monospace; font-size:10.5px; color:var(--faint); letter-spacing:1.5px}
-  .card .meta b{color:var(--signal); display:block; font-size:18px; font-family:'Anton'; letter-spacing:.5px}
+/* ---------- senses spec sheet ---------- */
+.spec{margin-top:42px;border-top:1px solid var(--line)}
+.srow{display:grid;grid-template-columns:54px 1.1fr 1.4fr 110px;gap:18px;align-items:center;padding:17px 4px;border-bottom:1px solid var(--line);transition:background .2s,padding-left .3s}
+.srow:hover{background:rgba(240,233,221,.03);padding-left:14px}
+.srow .ix{font-family:var(--m);font-size:11px;color:var(--faint)}
+.srow:hover .ix{color:var(--ndl)}
+.srow .nm{font-weight:700;font-size:18px;letter-spacing:-.015em}
+.srow .ds{font-size:13px;color:var(--dim);line-height:1.5}
+.srow .un{font-family:var(--m);font-size:12px;color:var(--ndl);text-align:right;letter-spacing:.04em}
+@media(max-width:680px){.srow{grid-template-columns:40px 1fr 80px}.srow .ds{display:none}}
 
-  /* ---- footer ---- */
-  footer{border-top:1px solid var(--line); padding:48px 0 60px; margin-top:40px}
-  .fcols{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:30px}
-  .fbrand{font-family:'Anton'; font-size:30px; letter-spacing:1.5px}
-  .fbrand .dot{color:var(--signal)}
-  .flinks{display:flex; gap:30px; flex-wrap:wrap}
-  .flinks a{font-family:'Martian Mono',monospace; font-size:11px; letter-spacing:1.6px;
-    color:var(--dim); text-transform:uppercase; transition:color .15s}
-  .flinks a:hover{color:var(--signal)}
-  .copy{margin-top:36px; font-family:'Martian Mono',monospace; font-size:10.5px;
-    color:var(--faint); letter-spacing:1px}
+/* ---------- science note ---------- */
+.sci{margin-top:42px;display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+@media(max-width:760px){.sci{grid-template-columns:1fr}}
+.sci .card{background:var(--srf);border-radius:22px;padding:26px;transition:background .3s,transform .35s}
+.sci .card:hover{background:var(--srf2);transform:translateY(-4px)}
+.sci h4{font-family:var(--m);font-weight:500;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.sci .big{font-weight:900;font-size:30px;letter-spacing:-.025em;margin-top:12px}
+.sci .big i{font-style:normal;color:var(--ndl)}
+.sci p{font-size:13.5px;line-height:1.65;color:var(--dim);margin-top:10px}
+
+/* ---------- closing CTA ---------- */
+.fin{margin-top:130px;border-radius:30px;padding:64px 44px;text-align:center;position:relative;overflow:hidden;
+  background:linear-gradient(135deg, rgba(255,77,28,.16), transparent 52%), var(--srf);box-shadow:inset 0 0 0 1.5px rgba(255,77,28,.25)}
+.fin:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 42%,rgba(255,77,28,.07) 50%,transparent 58%);background-size:240% 100%;animation:shimmer 4s linear infinite}
+.fin .lab{font-family:var(--m);font-size:10px;letter-spacing:.32em;color:var(--ndl);text-transform:uppercase}
+.fin h2{font-weight:900;font-size:clamp(34px,6vw,64px);letter-spacing:-.04em;line-height:.95;margin-top:16px}
+.fin h2 .l2{color:transparent;-webkit-text-stroke:1.5px rgba(240,233,221,.5)}
+.fin p{font-size:15px;color:var(--dim);margin-top:18px}
+.fin .cta{justify-content:center;margin-top:34px;animation:none;opacity:1;transform:none}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);margin-top:110px;padding:44px 0 80px}
+.fcols{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:28px}
+.fbrand{font-weight:900;font-size:28px;letter-spacing:-.035em}
+.fbrand .tick{color:var(--ndl)}
+.flinks{display:flex;gap:28px;flex-wrap:wrap}
+.flinks a{font-family:var(--m);font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;transition:color .15s}
+.flinks a:hover{color:var(--ndl)}
+.copy{margin-top:34px;font-family:var(--m);font-size:10.5px;color:var(--faint);letter-spacing:.06em}
+
+@media(max-width:1080px){.hero-dial{opacity:.5}}
+@media(max-width:680px){.hero-dial{display:none}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <header>
-    <div class="brand">KALIBRE<span class="dot">.</span></div>
-    <nav>
-      <a href="#nasil">Nasıl</a>
-      <a href="#duyular">Duyular</a>
-      <a href="privacy.html">Gizlilik</a>
-      <a href="mailto:myusufka@gmail.com">Destek</a>
-    </nav>
-  </header>
+<header>
+  <a class="brand" href="/">KALIBRE<span class="tick">.</span></a>
+  <nav>
+    <a href="#nasil">Nasıl</a>
+    <a href="#duyular">Duyular</a>
+    <a href="privacy.html">Gizlilik</a>
+    <a href="mailto:myusufka@gmail.com">Destek</a>
+    <a class="play" href="/play/">▶ OYNA</a>
+  </nav>
+</header>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="tag"><span class="pulse"></span><span>DUYU PARTY OYUNU · CANLI</span></div>
-    <h1>DUYULARINI<br>KALİBRE ET<span class="dot">.</span></h1>
-    <p class="sub">Arkadaşlarınla aynı odada, her tur farklı bir duyu testi.
-       Rengi tuttur, tonu yakala, süreyi bil — <b>en yakın kazanır.</b></p>
-    <p class="en">A sensory party game · same room, different sense each round · closest wins</p>
+<!-- ==================== HERO ==================== -->
+<div class="hero">
+  <div class="hero-dial" aria-hidden="true">
+    <div class="glow"></div><div class="rim"></div><div class="rim2"></div>
+    <div class="ticks"></div><div class="redzone"></div><div class="ndl"></div><div class="hub"></div>
+  </div>
+  <div class="crumb"><span class="rule"></span><b>KALIBRE</b> / duyu party oyunu / en yakın kazanır</div>
+  <h1>DUYULARINI<br><span class="l2">KALİBRE ET</span><span class="tick">.</span></h1>
+  <p class="sub">Arkadaşlarınla aynı odada, her tur farklı bir duyu testi.
+     Rengi tuttur, süreyi bil, tempoyu yakala — <b>gerçeğe en yakın tahmin turu alır.</b>
+     Kayıt yok, kurulum yok: oda kur, kodu söyle, başla.</p>
+  <p class="sub-en">A sensory party game · same room, a different sense each round · closest wins</p>
 
-    <div class="cta">
-      <a class="btn soon" id="appstore" href="#" aria-disabled="true">
-        <span class="k">iOS</span><span class="v">Yakında App Store'da</span>
-      </a>
-      <a class="btn soon" href="#">
-        <span class="k">ANDROID</span><span class="v">Yakında Google Play'de</span>
-      </a>
-    </div>
-
-    <!-- instrument readout -->
-    <div class="readout">
-      <div class="cell"><div class="n">11</div><div class="label l">Duyu testi</div></div>
-      <div class="cell"><div class="n">2–12</div><div class="label l">Oyuncu / oda</div></div>
-      <div class="cell"><div class="n">ΔE</div><div class="label l">Bilimsel skor</div></div>
-      <div class="cell"><div class="n">0</div><div class="label l">Kayıt gerekmez</div></div>
-    </div>
+  <div class="cta">
+    <a class="btn hot" href="/play/"><span class="k">TARAYICIDA · ÜCRETSİZ</span><span class="v">▶ Webde Oyna</span></a>
+    <a class="btn ghost" href="#" aria-disabled="true"><span class="k">iOS</span><span class="v">Yakında App Store'da</span></a>
+    <a class="btn ghost" href="#" aria-disabled="true"><span class="k">ANDROID</span><span class="v">Yakında Google Play'de</span></a>
   </div>
 
-  <!-- HOW -->
-  <section id="nasil">
-    <div class="label eyebrow">// 01 — Nasıl oynanır</div>
-    <h2>Bir oda kur, kodu paylaş, ölç<span class="dot">.</span></h2>
-    <p class="lead">Kalibre bir refleks ve algı oyunu. Herkes aynı uyaranı görür;
-       gerçeğe en yakın tahmini yapan turu alır. Skor göz kararı değil —
-       renkte CIELAB ΔE, açıda derece, seste sent cinsinden ölçülür.</p>
+  <div class="readout">
+    <div><b>11</b><small>duyu testi</small></div>
+    <div><b>2–12</b><small>oyuncu / oda</small></div>
+    <div><b><i>ΔE</i>2000</b><small>bilimsel skor</small></div>
+    <div><b>0</b><small>kayıt · hesap</small></div>
+  </div>
+</div>
 
-    <div class="steps">
-      <div class="step">
-        <div class="idx">01</div>
-        <h3>Oda kur</h3>
-        <p>Host modu, zorluğu ve tur sayısını seçer. 4 haneli kod ya da QR ile arkadaşların katılır.</p>
-      </div>
-      <div class="step">
-        <div class="idx">02</div>
-        <h3>Aynı anda ölç</h3>
-        <p>Her tur bir duyu: uyaran herkese senkron açılır, kısa süre bakar, sonra tahminini kilitlersin.</p>
-      </div>
-      <div class="step">
-        <div class="idx">03</div>
-        <h3>En yakın kazanır</h3>
-        <p>Tur biter, canlı leaderboard güncellenir. Maç sonunda podyum + paylaşılabilir skor kartı.</p>
+<div class="tape" aria-hidden="true"><div class="in">
+  <span>RENGİ TUTTUR</span><span>·</span><span>SÜREYİ BİL</span><span>·</span><span>AÇIYI KUR</span><span>·</span><span><b>EN YAKIN KAZANIR</b></span><span>·</span><span>TEMPOYU SAY</span><span>·</span><span>PERDEYİ YAKALA</span><span>·</span>
+  <span>RENGİ TUTTUR</span><span>·</span><span>SÜREYİ BİL</span><span>·</span><span>AÇIYI KUR</span><span>·</span><span><b>EN YAKIN KAZANIR</b></span><span>·</span><span>TEMPOYU SAY</span><span>·</span><span>PERDEYİ YAKALA</span><span>·</span>
+</div></div>
+
+<!-- ==================== 01 NASIL ==================== -->
+<section id="nasil">
+  <div class="gnum">01</div>
+  <div class="snum rv"><span class="n">01</span><h2>nasıl oynanır</h2>
+    <span class="why">tahmin oyunu değil — ölçüm oyunu. skor gerçek birimlerle hesaplanır</span></div>
+  <p class="lede rv">Herkes aynı uyaranı görür: bir renk, bir açı, bir süre. Kısa bir bakış —
+  sonra hafızadan <b>yeniden kurarsın</b>. Göz kararı puan yok: sapma <code>ΔE2000</code>,
+  derece ve milisaniye cinsinden ölçülür, en yakın tahmin turu alır.</p>
+
+  <div class="steps">
+    <div class="step rv d1">
+      <div class="sn">ADIM 01</div>
+      <h3>Oda kur, kodu paylaş</h3>
+      <p>Host modu ve zorluğu seçer. Arkadaşların 4 haneli kodla saniyeler içinde katılır — uygulama yüklemesi bile gerekmez, web'den de girilir.</p>
+      <div class="art"><span class="codepill">K7<i>Q</i>2</span></div>
+    </div>
+    <div class="step rv d2">
+      <div class="sn">ADIM 02</div>
+      <h3>Bak · hafızana al · kur</h3>
+      <p>Uyaran herkese aynı anda açılır, birkaç saniye sonra kaybolur. Şimdi sıra sende: kadranı çevir, hafızandakini yeniden üret, kilitle.</p>
+      <div class="art"><div class="mdial"><div class="arc"></div><div class="bt"></div><div class="nd"></div><div class="hb"></div></div></div>
+    </div>
+    <div class="step rv d3">
+      <div class="sn">ADIM 03</div>
+      <h3>İğne karar verir</h3>
+      <p>Tur biter, sapmalar açıklanır, canlı skor tablosu güncellenir. Maç sonunda podyum — ve paylaşılabilir skor kartı.</p>
+      <div class="art"><span class="slamm">9<i>.</i>2</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 02 MODLAR ==================== -->
+<section id="modlar">
+  <div class="gnum">02</div>
+  <div class="snum rv"><span class="n">02</span><h2>party ya da tek başına</h2>
+    <span class="why">canlı senkron oda · ya da 5 turluk solo maç</span></div>
+
+  <div class="modes">
+    <div class="mode party rv d1">
+      <div class="tag">Canlı · arkadaşlarla</div>
+      <h3>PARTY</h3>
+      <p>Aynı odadaki herkes <b>aynı saniyede</b> aynı uyaranı görür — sunucu saatiyle senkron.
+         Karışık ya da tek-duyu maçlar, SNAP şimşek turları, tur tur sertleşen RAMP zorluğu.
+         Host kontrol eder, iğne karar verir.</p>
+      <div class="meta">
+        <div><b>2–12</b>oyuncu</div>
+        <div><b>3</b>zorluk kademesi</div>
+        <div><b>canlı</b>skor tablosu</div>
       </div>
     </div>
-  </section>
-
-  <!-- MODES -->
-  <section>
-    <div class="label eyebrow">// 02 — Modlar</div>
-    <h2>Party ya da tek başına<span class="dot">.</span></h2>
-    <div class="split">
-      <div class="card">
-        <h3>PARTY</h3>
-        <p>Aynı odadaki arkadaşlarınla canlı yarış. Host kontrolü, karışık ya da tek-duyu maçlar,
-           SNAP şimşek turları ve artan zorluk. Sunucu saatiyle tam senkron.</p>
-        <div class="meta">
-          <div>OYUNCU<b>2–12</b></div>
-          <div>ZORLUK<b>3 kademe</b></div>
-          <div>SENKRON<b>Canlı</b></div>
-        </div>
-      </div>
-      <div class="card">
-        <h3>SOLO MAÇ</h3>
-        <p>5 turluk kişisel maç — karışık ya da tek bir duyuda ustalaş. Kişisel rekorlarını kır,
-           skor kartını paylaş. İnternet olmadan da oynanır.</p>
-        <div class="meta">
-          <div>TUR<b>5</b></div>
-          <div>REKOR<b>Duyu bazlı</b></div>
-          <div>ÇEVRİMDIŞI<b>Evet</b></div>
-        </div>
+    <div class="mode rv d2">
+      <div class="tag">Tek başına</div>
+      <h3>SOLO MAÇ</h3>
+      <p>5 turluk kişisel maç — karışık havuz ya da tek duyuda ustalaşma.
+         Duyu bazlı kişisel rekorlar, paylaşılabilir skor kartı. <b>Çevrimdışı da çalışır.</b></p>
+      <div class="meta">
+        <div><b>5</b>tur / maç</div>
+        <div><b>11</b>duyu havuzu</div>
+        <div><b>✓</b>çevrimdışı</div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- SENSES -->
-  <section id="duyular">
-    <div class="label eyebrow">// 03 — Roster</div>
-    <h2>On bir duyu testi<span class="dot">.</span></h2>
-    <p class="lead">Görsel, zamansal ve işitsel algı. Her biri bağımsız ölçülür; party havuzunda karışır.</p>
-    <div class="senses">
-      <div class="chip"><span class="swatch"></span><span class="t">RENK</span><span class="u">ΔE</span></div>
-      <div class="chip"><span class="swatch"></span><span class="t">GRİ</span><span class="u">L*</span></div>
-      <div class="chip"><span class="swatch"></span><span class="t">AÇI</span><span class="u">°</span></div>
-      <div class="chip"><span class="swatch"></span><span class="t">UZUNLUK</span><span class="u">px</span></div>
-      <div class="chip"><span class="swatch"></span><span class="t">ALAN</span><span class="u">%</span></div>
-      <div class="chip"><span class="swatch"></span><span class="t">SAYI</span><span class="u">n</span></div>
-      <div class="chip"><span class="swatch"></span><span class="t">ŞEKİL</span><span class="u">Δ</span></div>
-      <div class="chip"><span class="swatch"></span><span class="t">SÜRE</span><span class="u">ms</span></div>
-      <div class="chip"><span class="swatch"></span><span class="t">TEMPO</span><span class="u">BPM</span></div>
-      <div class="chip"><span class="swatch"></span><span class="t">REFLEKS</span><span class="u">ms</span></div>
-      <div class="chip"><span class="swatch"></span><span class="t">PERDE</span><span class="u">Hz</span></div>
-    </div>
-  </section>
+<!-- ==================== 03 DUYULAR ==================== -->
+<section id="duyular">
+  <div class="gnum">03</div>
+  <div class="snum rv"><span class="n">03</span><h2>on bir duyu testi</h2>
+    <span class="why">görsel · zamansal · işitsel algı — her biri kendi biriminde ölçülür</span></div>
+  <p class="lede rv">Her test bir <b>enstrüman</b>: uyaran üstte, kontrol başparmağının altında.
+  Birim gerçek — pazarlama birimi değil.</p>
 
-  <footer>
-    <div class="fcols">
-      <div class="fbrand">KALIBRE<span class="dot">.</span></div>
-      <div class="flinks">
-        <a href="#nasil">Nasıl oynanır</a>
-        <a href="#duyular">Duyular</a>
-        <a href="privacy.html">Gizlilik / Privacy</a>
-        <a href="mailto:myusufka@gmail.com">Destek / Support</a>
-      </div>
+  <div class="spec rv">
+    <div class="srow"><span class="ix">01</span><span class="nm">Renk</span><span class="ds">Gördüğün rengi ton · doygunluk · parlaklıkla yeniden kur</span><span class="un">ΔE2000</span></div>
+    <div class="srow"><span class="ix">02</span><span class="nm">Gri</span><span class="ds">Aynı griyi yakala — göz parlaklıkta en kolay yanılır</span><span class="un">L*</span></div>
+    <div class="srow"><span class="ix">03</span><span class="nm">Açı</span><span class="ds">Çizginin eğimini hafızadan kur</span><span class="un">derece °</span></div>
+    <div class="srow"><span class="ix">04</span><span class="nm">Uzunluk</span><span class="ds">Çubuğu gördüğün uzunluğa çek</span><span class="un">%</span></div>
+    <div class="srow"><span class="ix">05</span><span class="nm">Alan</span><span class="ds">Şeklin kapladığı alanı eşle</span><span class="un">%</span></div>
+    <div class="srow"><span class="ix">06</span><span class="nm">Sayı</span><span class="ds">Bir anlık bakışta kaç nokta vardı?</span><span class="un">n</span></div>
+    <div class="srow"><span class="ix">07</span><span class="nm">Şekil</span><span class="ds">Boyut + dönüşü birlikte yeniden kur</span><span class="un">Δ</span></div>
+    <div class="srow"><span class="ix">08</span><span class="nm">Süre</span><span class="ds">Gösterilen süreyi kronometresiz say</span><span class="un">ms</span></div>
+    <div class="srow"><span class="ix">09</span><span class="nm">Tempo</span><span class="ds">Duyduğun ritmi vuruşlarla geri ver</span><span class="un">BPM</span></div>
+    <div class="srow"><span class="ix">10</span><span class="nm">Refleks</span><span class="ds">Sinyalde dokun — erken çıkış yanar</span><span class="un">ms</span></div>
+    <div class="srow"><span class="ix">11</span><span class="nm">Perde</span><span class="ds">Duyduğun tonu kulaktan kur (kulaklık önerilir)</span><span class="un">Hz · cent</span></div>
+  </div>
+
+  <div class="sci">
+    <div class="card rv d1">
+      <h4>Renk bilimi</h4>
+      <div class="big">CIELAB <i>ΔE2000</i></div>
+      <p>Renk sapması RGB farkıyla değil, insan algısını modelleyen CIEDE2000 formülüyle puanlanır — endüstrinin renk eşleme standardı, Sharma referans vektörleriyle test edilmiş.</p>
     </div>
-    <div class="copy">© 2026 KALIBRE · kalibre.gg · Muhammed Yusuf Kaya tarafından geliştirildi</div>
-  </footer>
+    <div class="card rv d2">
+      <h4>Adil senkron</h4>
+      <div class="big">Sunucu saati, <i>tek</i> kaynak</div>
+      <p>Party'de uyaran her cihazda sunucu zaman damgasından türetilir: kimse erken göremez. Perde algısı logaritmik olduğundan ses sapması Hz değil cent ile ölçülür.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FIN ==================== -->
+<div class="fin rv">
+  <div class="lab">Kalibrasyon başlasın</div>
+  <h2>GÖZÜNE NE KADAR<br><span class="l2">GÜVENİYORSUN</span><span style="color:var(--ndl)">?</span></h2>
+  <p>Tarayıcıda hemen oyna — kayıt yok, kurulum yok.</p>
+  <div class="cta">
+    <a class="btn hot" href="/play/"><span class="k">TARAYICIDA · ÜCRETSİZ</span><span class="v">▶ Webde Oyna</span></a>
+  </div>
+</div>
+
+<footer>
+  <div class="fcols">
+    <div class="fbrand">KALIBRE<span class="tick">.</span></div>
+    <div class="flinks">
+      <a href="/play/">Oyna</a>
+      <a href="#nasil">Nasıl oynanır</a>
+      <a href="#duyular">Duyular</a>
+      <a href="privacy.html">Gizlilik / Privacy</a>
+      <a href="mailto:myusufka@gmail.com">Destek / Support</a>
+    </div>
+  </div>
+  <div class="copy">© 2026 KALIBRE · kalibre.gg · Muhammed Yusuf Kaya tarafından geliştirildi</div>
+</footer>
 
 </div>
+
+<script>
+// scroll reveal
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
 </body>
 </html>
