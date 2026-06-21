@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KALIBRE — İndir / Download</title>
+<meta name="description" content="KALIBRE — duyu testi oyunu. App Store ve Google Play'de ücretsiz.">
+<script>
+  (function () {
+    var APPSTORE = 'https://apps.apple.com/app/id6778556946';
+    var PLAY = 'https://play.google.com/store/apps/details?id=gg.kalibre.kalibre';
+    var ua = navigator.userAgent || navigator.vendor || '';
+    var isIOS = /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    var isAndroid = /android/i.test(ua);
+    try {
+      if (isIOS) { location.replace(APPSTORE); }
+      else if (isAndroid) { location.replace(PLAY); }
+    } catch (e) {}
+  })();
+</script>
+<style>
+  :root{--bg:#141210;--ink:#F0E9DD;--signal:#FF4D1C;--faint:#9b9484}
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(120% 60% at 80% 0%,rgba(255,77,28,.14),transparent 55%),#141210;
+    color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center}
+  main{padding:40px 22px;max-width:480px}
+  .k{font-size:64px;font-weight:900;letter-spacing:-.03em;margin:0}
+  .k .d{color:var(--signal)}
+  .sub{font-family:"Courier New",monospace;letter-spacing:5px;color:var(--faint);margin:8px 0 36px;font-size:14px}
+  .row{display:flex;flex-direction:column;gap:14px;align-items:stretch}
+  a.btn{display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;
+    background:#000;color:#fff;border:1.5px solid rgba(240,233,221,.5);border-radius:16px;
+    padding:18px 22px;font-size:18px;font-weight:600}
+  a.btn svg{width:22px;height:22px;fill:#fff}
+  .note{color:var(--faint);font-size:13px;margin-top:22px}
+  a.privacy{color:var(--faint)}
+</style>
+</head>
+<body>
+<main>
+  <h1 class="k">KALIBRE<span class="d">.</span></h1>
+  <div class="sub">DUYU TESTİ OYUNU</div>
+  <div class="row">
+    <a class="btn" href="https://apps.apple.com/app/id6778556946">
+      <svg viewBox="0 0 814 1000"><path d="M788 340c-6 4-114 64-114 198 0 155 136 210 140 211-1 4-22 73-72 144-44 62-90 124-160 124s-92-41-173-41c-79 0-107 42-171 42S88 904 44 838C-8 766-42 624-42 488c0-217 141-332 280-332 74 0 135 49 181 49 44 0 113-52 197-52 32 0 140 3 211 105zM509 89c35-41 60-99 60-156 0-8-1-16-2-23-57 2-126 38-167 86-32 36-62 93-62 151 0 9 2 17 2 20 4 1 9 1 14 1 51 0 116-35 155-79z"/></svg>
+      App Store
+    </a>
+    <a class="btn" href="https://play.google.com/store/apps/details?id=gg.kalibre.kalibre">
+      <svg viewBox="0 0 512 512"><path d="M48 59v394c0 6 3 11 8 14l228-211L56 45c-5 3-8 8-8 14zm316 137l-58-33L86 32c-3-2-6-2-9-2l263 152zm0 120l-59 34L77 482c3 0 6 0 9-2l220-128zm84-44l-55-32-62 36 62 36 55-32c14-8 14-30 0-38z"/></svg>
+      Google Play
+    </a>
+  </div>
+  <div class="note">İndirme başlamadıysa yukarıdan seç · <a class="privacy" href="https://kalibre.gg/privacy.html">Gizlilik</a></div>
+</main>
+</body>
+</html>
