@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**", "CNAME"],
+    "cleanUrls": false,
+    "headers": [
+      {
+        "source": "**/*.@(wasm)",
+        "headers": [{ "key": "Content-Type", "value": "application/wasm" }]
+      }
+    ]
+  }
+}
